@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
-#include <QFile>
-#include <QList>
 #include <iostream>
 
 std::string exec(const char* cmd);
@@ -26,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
         std::cerr << "Error: Trackpoint device path not found." << std::endl;
         exit(-1);
     }
+
+    qDebug() << "Oops, something went south";
 }
 
 MainWindow::~MainWindow()
@@ -35,7 +35,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-
     double t = double(position);
     double selected = t / 100.0;
     ui->lineEdit->setText(QString::number(selected));
@@ -44,18 +43,15 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
 
 void MainWindow::on_pushButton_2_clicked()
 {
-
     qApp->exit();
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-
     QString value = ui->lineEdit->text();
 
     if (value != "0")
     {
-
         int id = 0;
 
         if (id != -1)
@@ -64,23 +60,19 @@ void MainWindow::on_pushButton_clicked()
             QByteArray ba = command.toLocal8Bit();
             const char *c_str2 = ba.data();
             write_changes(c_str2);
-
         }
         else
         {
             qDebug() << "Oops, something went south";
         }
-
     }
     else
     {
         qDebug() << "Please select a value";
-
     }
 }
 
 void MainWindow::write_changes(const char *command)
 {
-
     int return_code = system(command);
 }

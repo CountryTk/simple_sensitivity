@@ -26,7 +26,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     std::string path;
-
+    int value;
 };
 
 #endif // MAINWINDOW_H
