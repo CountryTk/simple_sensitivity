@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
-#include <unistd.h>
+#include <QFile>
+#include <QList>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->lineEdit->setReadOnly(true);
     ui->lineEdit->setText("0");
+    ui->horizontalSlider->setMaximum(100);
 
 }
 
@@ -19,7 +21,10 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position) {
 
-    ui->lineEdit->setText(QString::number((position + 1) * 2));
+    double value = 100.000;
+    double t = double(position);
+    double selected = t / value;
+    ui->lineEdit->setText(QString::number(selected));
 }
 
 
@@ -33,11 +38,18 @@ void MainWindow::on_pushButton_clicked() {
     QString value = ui->lineEdit->text();
 
     if (value != "0") {
-        QString command = "pkexec su && echo '" + value + "'" + " > /sys/devices/platform/i8042/serio1/serio2/sensitivity";
-        qDebug() << command;
-        QByteArray ba = command.toLocal8Bit();
-        const char *c_str2 = ba.data();
-        write_changes(c_str2);
+
+        int id = get_input_id();
+
+        if (id != -1) {
+            QString command = "xinput --set-prop " + QString::number(id) + " 'libinput Accel Speed' " + value;
+            QByteArray ba = command.toLocal8Bit();
+            const char *c_str2 = ba.data();
+            write_changes(c_str2);
+
+        } else {
+            qDebug() << "Oops, something went south";
+        }
 
     }  else {
         qDebug() << "Please select a value";
@@ -47,6 +59,28 @@ void MainWindow::on_pushButton_clicked() {
 
 void MainWindow::write_changes(const char *command) {
 
-    int return_code = system("pkexec su");
-    qDebug() << return_code;
+    int return_code = system(command);
+
+}
+
+int MainWindow::get_input_id() {
+
+    int return_code = system("xinput list > list.txt");
+    system("python3 parse.py list.txt");
+
+    if (return_code == 0) {
+        QFile file("value.txt");
+        file.open(QIODevice::ReadOnly);
+        QString our_value;
+        our_value.append(file.readAll());
+        int code = our_value.toInt();
+        return code;
+
+
+    } else {
+        qDebug() << "Error";
+
+        return -1;
+    }
+
 }
