@@ -14,7 +14,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
     void write_changes(const char *command);
+
+    int get_input_id();
 
 private slots:
     void on_horizontalSlider_sliderMoved(int position);
