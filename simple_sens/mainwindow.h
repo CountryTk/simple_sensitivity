@@ -15,13 +15,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void write_changes(const char *command);
 
 private slots:
     void on_horizontalSlider_sliderMoved(int position);
-    void on_pushButton_2_clicked();
-    void on_pushButton_clicked();
-
+    void on_save_button_clicked();
+    void on_exit_button_clicked();
 
 private:
     Ui::MainWindow *ui;

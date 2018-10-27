@@ -2,15 +2,16 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <iostream>
+#include <string>
 
-std::string exec(const char* cmd);
+std::string exec(const std::string& cmd);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->lineEdit->setReadOnly(true);
-    ui->lineEdit->setText("0");
+    ui->horizontalSlider->setMinimum(10);
     ui->horizontalSlider->setMaximum(220);
 
     // Find device path of trackpoint
@@ -25,7 +26,17 @@ MainWindow::MainWindow(QWidget *parent) :
         exit(-1);
     }
 
-    qDebug() << "Oops, something went south";
+    // Remove the new line
+    path.pop_back();
+
+    // Add file
+    path += "/sensitivity";
+
+    // Get current sensitivity
+    value = std::stoi(exec("cat " + path));
+
+    ui->lineEdit->setText(QString::number(value));
+    ui->horizontalSlider->setValue(value);
 }
 
 MainWindow::~MainWindow()
@@ -35,44 +46,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-    double t = double(position);
-    double selected = t / 100.0;
-    ui->lineEdit->setText(QString::number(selected));
+    // Update text box
+    ui->lineEdit->setText(QString::number(position));
 }
 
+void MainWindow::on_save_button_clicked()
+{
+    // Write value to device file
+    exec("echo " + std::to_string(ui->horizontalSlider->value()) + " > " + path);
+}
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_exit_button_clicked()
 {
     qApp->exit();
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    QString value = ui->lineEdit->text();
-
-    if (value != "0")
-    {
-        int id = 0;
-
-        if (id != -1)
-        {
-            QString command = "xinput --set-prop " + QString::number(id) + " 'libinput Accel Speed' " + value;
-            QByteArray ba = command.toLocal8Bit();
-            const char *c_str2 = ba.data();
-            write_changes(c_str2);
-        }
-        else
-        {
-            qDebug() << "Oops, something went south";
-        }
-    }
-    else
-    {
-        qDebug() << "Please select a value";
-    }
-}
-
-void MainWindow::write_changes(const char *command)
-{
-    int return_code = system(command);
 }

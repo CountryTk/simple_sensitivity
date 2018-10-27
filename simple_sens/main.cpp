@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
 
     w.show();
     w.setWindowTitle("Simple sensitivity");
-    w.setFixedSize(400,310);
 
     return a.exec();
 }
