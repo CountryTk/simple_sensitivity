@@ -1,7 +1,9 @@
 # simple_sensitivity
-Change the sensitivity of your trackpoint with no hassle
+Change the sensitivity of your trackpoint with no hassle.
+A simple to use wrapper around libinput
 
 ***xinput has to be installed in order for this to work!***
+
 
 # How to use?
 1) go to the releases tab and download the binary and the parse.py file
