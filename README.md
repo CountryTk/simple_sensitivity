@@ -4,6 +4,9 @@ A simple to use wrapper around libinput
 
 ***xinput has to be installed in order for this to work!***
 
+# Requirements
+## Arch
+`sudo pacman -S qt5-base`
 
 # How to use?
 1) go to the releases tab and download the binary and the parse.py file
